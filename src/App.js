@@ -1,25 +1,50 @@
-import logo from './logo.svg';
-import './App.css';
+import { useState } from "react";
+import Header from "./Header";
+import ItemList from "./ItemList";
+import Nav from "./Nav";
+// import Form from "./Form";
 
-function App() {
+export default function App() {
+  const [items, setItems] = useState([]);
+  const [editMode, setEditMode] = useState(false);
+
+  function handleAddItem(item) {
+    setItems((items) => [...items, item]);
+  }
+
+  function handleDelete(id) {
+    setItems((items) => items.filter((item) => item.id !== id));
+  }
+
+  function handleToggle(id) {
+    setItems((items) =>
+      items.map((item) =>
+        item.id === id ? { ...item, complete: !item.complete } : item
+      )
+    );
+  }
+
+  function handleEditItem(updatedDescription, id) {
+    setEditMode(false);
+    setItems((items) =>
+      items.map((item) =>
+        item.id === id ? { ...item, description: updatedDescription } : item
+      )
+    );
+  }
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className="app">
+      <Header />
+      <Nav onAddItem={handleAddItem} itemLength={items.length} />
+      <ItemList
+        items={items}
+        onDeleteItem={handleDelete}
+        onToggle={handleToggle}
+        onEditItem={handleEditItem}
+        editMode={editMode}
+        setEditMode={setEditMode}
+      />
     </div>
   );
 }
-
-export default App;
